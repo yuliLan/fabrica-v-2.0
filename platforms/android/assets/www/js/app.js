@@ -31,6 +31,34 @@ angular.module('starter', ['ionic','ngCordova'])
     };
     return objeto;
 })
+.controller('PhoneCtrl', function($scope){
+  $scope.numero_celular = window.localStorage.getItem("numero_celular") ? JSON.parse(window.localStorage.getItem("numero_celular")):[];  
+  $scope.addNumero = function(numero)
+  {
+    var existe = $scope.numero_celular.filter(function(el)
+    {
+        return el.numero_oficial == numero;
+    })
+    if (existe.length > 0)
+     {
+        alert("el numero ya existe");
+        $scope.numero="";
+        console.log($scope.numero_celular);
+        return;
+     }
+     if ($scope.numero_celular !=null)
+     {
+        $scope.numero_celular.push({numero_oficial:numero});
+        window.localStorage.setItem("numero_celular", JSON.stringify($scope.numero_celular));
+     }
+     else 
+     {
+        
+        window.localStorage.setItem("numero_celular", JSON.stringify([{numero_oficial:numero}]));
+     }
+     $scope.numero="";
+  }  
+})
 .controller('DeviceController', function($ionicPlatform, $scope, $cordovaDevice, myService, $timeout) {
     $ionicPlatform.ready(function() {
           
@@ -42,7 +70,7 @@ angular.module('starter', ['ionic','ngCordova'])
         });
     });
 })
-.controller("ExampleController", function ($scope, $cordovaCamera, myService) {
+.controller("camaraCtrl", function ($scope, $cordovaCamera, myService) {
     $scope.fotos = []
     $scope.takePhoto = function () {
         var options = {
@@ -93,9 +121,8 @@ angular.module('starter', ['ionic','ngCordova'])
     }
 })
 
-.controller('GeolocationCtrl', function($scope, $cordovaGeolocation,myService) {
-    $scope.textoss="";
-      
+.controller('GeolocationCtrl', function($scope, $cordovaGeolocation, myService) {
+          
     var posOptions = {timeout: 10000, enableHighAccuracy: false};
     
     $cordovaGeolocation
@@ -105,29 +132,13 @@ angular.module('starter', ['ionic','ngCordova'])
           myService.longitud = position.coords.longitude;
           myService.altura = position.coords.altitude;
           myService.velocidad=position.coords.speed;
-
-         if(myService.latitud === null)
-         {
-           myService.latitud=00;
-         }  
-         if(myService.longitud === null)
-         {
-           myService.longitud=00;
-         }         
-          if(myService.altura === null)
-         {
-           myService.altura=-1;
-         }
-           if(myService.velocidad === null)
-         {
-           myService.velocidad=-1;
-         }  
-         
+        
       },function(err) {
         //alert("encienda su GPS");
-    }
-    );
-
+       alert('code: ' + err.code + '\n' +
+          'message: ' + err.message + '\n');
+       }
+     );
 })
 
 .controller('envia',function($scope,$cordovaDeviceOrientation,$http,$cordovaGeolocation,myService){
@@ -141,39 +152,50 @@ angular.module('starter', ['ionic','ngCordova'])
                myService.orientacion=-1;
             }  
         }, function(err) {
-            // An error occurred
+            console.log("error de la orientacion" + err);
         })
     });
- 
-
     $scope.enviarDatos=function(){
         myService.mensaje = $scope.textoss;
-        
+     
         objeto = {
-            foto: myService.foto,
-            //foto: "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAQAAABpN6lAAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2tpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw",
+            //foto: myService.foto,
+            foto: "iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAQAAABpN6lAAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA2tpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw",
             //latitud: myService.latitud,
             //longitud: myService.longitud,
             //altura: myService.altura,
             //orientacion: myService.orientacion,
             //velocidad: myService.velocidad,
-
-            
-            latitud: -17.3880667 ,
+            latitud: -17.3880667,
             longitud: -66.1645952,
             altura: 50,
             orientacion: 30,
             velocidad: 3,
             
-           imei: myService.imei,
-            //imei: " nina nawi v2 ",
+            //imei: myService.imei,
+            imei: " scesi con jhonas ",
             number_phone:64378089,
             mensaje: myService.mensaje, 
             //mensaje: "hola como estas benjamin"
         };
-          // var url='http://192.168.0.104:8000/appmobile/services/?photo='+encodeURIComponent(objeto.foto)
-        //var url='http://incendios.delallajta.com/appmobile/services/?photo='+encodeURIComponent(objeto.foto)
-        var url='http://192.168.2.5:8000/appmobile/services/?photo='+encodeURIComponent(objeto.foto)
+        //console.log(objeto);
+        var msgdata =  {
+            photo : objeto.foto,
+            latitude : objeto.latitude,
+            longitude : objeto.longitude,
+            altitude : objeto.altura,
+            orientation : objeto.orientacion,
+            speed : objeto.velocidad,
+            imei : objeto.imei,
+            number_phone : objeto.number_phone,
+            message : objeto.mensaje,
+            is_read : false,
+            is_valid : false,
+        }
+        
+        
+       /* var url='http://incendios.delallajta.com/appmobile/services/?photo='+encodeURIComponent(objeto.foto)
+        //var url='http://192.168.2.5:8000/appmobile/services/?photo='+encodeURIComponent(objeto.foto)
             url+='&'+'latitude='+encodeURIComponent(objeto.latitud)
             url+='&'+'longitude='+encodeURIComponent(objeto.longitud)
             url+='&'+'altitude='+encodeURIComponent(objeto.altura)
@@ -182,10 +204,11 @@ angular.module('starter', ['ionic','ngCordova'])
             url+='&'+'imei='+encodeURIComponent(objeto.imei)
             url+='&'+'number_phone='+encodeURIComponent(objeto.number_phone)
             url+='&'+'message='+encodeURIComponent(objeto.mensaje);
-            //alert(url);
-           // data ={
-      
-        $http.get(url)
+            */
+        //$http.get(url)
+        //$http.post('http://192.168.1.163:8000/appmobile/', nuevo)
+        console.log(msgdata)
+        $http.post('http://192.168.1.163:8000/appmobile/', msgdata)
             .then(function(data,error){
                 window.tes=data;
                 alert(data.data);
@@ -195,7 +218,8 @@ angular.module('starter', ['ionic','ngCordova'])
                 //window.close();
                 ionic.Platform.exitApp();
             }, function(err) {
-                alert(url);
+                console.log(msgdata);
+                alert(err);
                //location.reload();
                 //window.close();
                 ionic.Platform.exitApp();

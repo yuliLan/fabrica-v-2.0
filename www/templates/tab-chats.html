@@ -6,8 +6,17 @@
         
         <div class="item item-text-wrap"  ng-controller="GeolocationCtrl">{{"* Verifique su conexion a internet."}}
         </div>
+        <div class="item item-text-wrap" ng-controller="PhoneCtrl">
+          <span class="input-label">Numero de celular:</span>
+          <div class="item item-input-inset">
+            <label class="item-input-wrapper">
+              <input type="text" placeholder="Ejm: 71400927" ng-model="numero">
+            </label>
+            <button class="button button-small button-calm" ng-click="addNumero(numero)">confirmar numero</button>
+          </div>
+        </div>
 
-        <div class="list card" ng-controller="ExampleController">
+        <div class="list card" ng-controller="camaraCtrl">
            <div class="item">
             <center>
             <button class="button icon-left ion-camera button-assertive" ng-click="takePhoto()">
@@ -18,7 +27,7 @@
            <center>
             
               <img height="200" width="200" ng-show="imgURI !== undefined"  ng-src="{{imgURI}}" style="text-align: center" >
-              <div ng-repeat="foto in fotos">{{foto}}</div>
+              <!--div ng-repeat="foto in fotos">{{foto}}</div-->
           </center>
         </div>
 
