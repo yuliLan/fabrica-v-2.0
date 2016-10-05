@@ -58,6 +58,7 @@ angular.module('starter', ['ionic','ngCordova'])
      }
      $scope.numero="";
   }  
+  console.log($scope.numero_oficial);
 })
 .controller('DeviceController', function($ionicPlatform, $scope, $cordovaDevice, myService, $timeout) {
     $ionicPlatform.ready(function() {
@@ -181,16 +182,18 @@ angular.module('starter', ['ionic','ngCordova'])
         //console.log(objeto);
         var msgdata =  {
             photo : objeto.foto,
-            latitude : objeto.latitude,
-            longitude : objeto.longitude,
+            latitude : -17.3880667,
+            longitude : -66.1645952,
             altitude : objeto.altura,
             orientation : objeto.orientacion,
             speed : objeto.velocidad,
             imei : objeto.imei,
             number_phone : objeto.number_phone,
             message : objeto.mensaje,
+            date_creation:null,
+            fire_percentage:null,
             is_read : false,
-            is_valid : false,
+            is_valid : false
         }
         
         
@@ -208,7 +211,7 @@ angular.module('starter', ['ionic','ngCordova'])
         //$http.get(url)
         //$http.post('http://192.168.1.163:8000/appmobile/', nuevo)
         console.log(msgdata)
-        $http.post('http://192.168.1.163:8000/appmobile/', msgdata)
+          $http.post('http://incendios.delallajta.com/appmobile/', msgdata)
             .then(function(data,error){
                 window.tes=data;
                 alert(data.data);
@@ -219,7 +222,7 @@ angular.module('starter', ['ionic','ngCordova'])
                 ionic.Platform.exitApp();
             }, function(err) {
                 console.log(msgdata);
-                alert(err);
+                console.log(err);
                //location.reload();
                 //window.close();
                 ionic.Platform.exitApp();
